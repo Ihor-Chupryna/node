@@ -1,14 +1,14 @@
 import * as jwt from "jsonwebtoken";
 
-import { tokenConstants } from "../constants";
+import { configs } from "../configs";
 import { ITokenPair, ITokenPayload } from "../types";
 
 class TokenService {
   public generateTokenPair(payload: ITokenPayload): ITokenPair {
-    const accessToken = jwt.sign(payload, tokenConstants.ACCESS_SECRET, {
+    const accessToken = jwt.sign(payload, configs.ACCESS_SECRET, {
       expiresIn: "15m",
     });
-    const refreshToken = jwt.sign(payload, tokenConstants.REFRESH_SECRET, {
+    const refreshToken = jwt.sign(payload, configs.REFRESH_SECRET, {
       expiresIn: "30d",
     });
 
