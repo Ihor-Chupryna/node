@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ETokenType } from "../enums";
 import { ApiError } from "../errors";
 import { Token } from "../models";
+import { tokenService } from "../services";
 
 class AuthMiddleware {
   public async checkAccessToken(
@@ -16,13 +18,15 @@ class AuthMiddleware {
         throw new ApiError("No token", 401);
       }
 
-      const tokenInfo = await Token.findById({ accessToken });
+      const jwtPayload = tokenService.checkToken(accessToken);
+
+      const tokenInfo = await Token.findOne({ accessToken });
 
       if (!tokenInfo) {
         throw new ApiError("Token not valid", 401);
       }
 
-      req.res.locals.tokenInfo = tokenInfo;
+      req.res.locals = { tokenInfo, jwtPayload };
       next();
     } catch (e) {
       next(e);
@@ -41,13 +45,18 @@ class AuthMiddleware {
         throw new ApiError("No token", 401);
       }
 
-      const tokenInfo = await Token.findById({ refreshToken });
+      const jwtPayload = tokenService.checkToken(
+        refreshToken,
+        ETokenType.refresh
+      );
+
+      const tokenInfo = await Token.findOne({ refreshToken });
 
       if (!tokenInfo) {
         throw new ApiError("Token not valid", 401);
       }
 
-      req.res.locals.tokenInfo = tokenInfo;
+      req.res.locals = { tokenInfo, jwtPayload };
       next();
     } catch (e) {
       next(e);
