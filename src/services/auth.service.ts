@@ -1,6 +1,8 @@
+import { EEmailActions } from "../enums";
 import { ApiError } from "../errors";
 import { Token, User } from "../models";
 import { ICredentials, ITokenPair, ITokenPayload, IUser } from "../types";
+import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
@@ -14,6 +16,11 @@ class AuthService {
         ...body,
         password: hashedPassword,
       });
+
+      await emailService.sendMail(
+        "igchup1985@gmail.com",
+        EEmailActions.WELCOME
+      );
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

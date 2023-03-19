@@ -1,0 +1,19 @@
+.header {
+    height: fit-content;
+    color: white;
+    background: black;
+    text-align: center;
+    font-size: 30px;
+    border: 1px solid white;
+    box-sizing: border-box;
+}
+
+.link {
+    height: fit-content;
+    color: black;
+    background: white;
+    text-align: center;
+    font-size: 30px;
+    border: 1px solid black;
+    box-sizing: border-box;
+}
