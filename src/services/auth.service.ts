@@ -1,15 +1,16 @@
-import { EEmailActions } from "../enums";
+import { EEmailActions, ESmsActions } from "../enums";
 import { ApiError } from "../errors";
 import { Token, User } from "../models";
 import { ICredentials, ITokenPair, ITokenPayload, IUser } from "../types";
 import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
+import { smsService } from "./sms.service";
 import { tokenService } from "./token.service";
 
 class AuthService {
   public async register(body: IUser): Promise<void> {
     try {
-      const { password } = body;
+      const { password, phone } = body;
       const hashedPassword = await passwordService.hash(password);
 
       await User.create({
@@ -17,10 +18,10 @@ class AuthService {
         password: hashedPassword,
       });
 
-      await emailService.sendMail(
-        "igchup1985@gmail.com",
-        EEmailActions.WELCOME
-      );
+      await Promise.all([
+        smsService.sendSms(phone, ESmsActions.WELCOME),
+        emailService.sendMail("igchup1985@gmail.com", EEmailActions.WELCOME),
+      ]);
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }
